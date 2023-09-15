@@ -480,26 +480,27 @@ def createTimesEdgesCountFromDF(df, weightColumn=None):
             weightsAtT = edgeWeights[rows]
         else:
             weightsAtT = np.ones((len(npArrT),))
-        edgesAtT = np.asarray(
-            [
+        edgesAtT = pd.DataFrame(  # BG: updated from np.asarray to pd.DataFrame. Current Numpy version cannot handle tuple within a tuple and gives inhomogenous error
+            [            
                 (t, (strand[ii], strand[ii + 1]), weightsAtT[jj])
                 for jj, strand in enumerate(strandsAtT)
                 for ii in range(len(strand) - 1)
             ]
         )
-        # weights = edgesAtT[:, 2]
-        uniqueEdges = np.unique(edgesAtT[:, 1])
-        timeEdgeCount = np.asarray(
+        
+        weights = edgesAtT[2]
+        uniqueEdges = np.unique(edgesAtT[1])
+        timeEdgeCount = pd.DataFrame(  # BG: updated from np.asarray to pd.DataFrame. Current Numpy version cannot handle tuple within a tuple and gives inhomogenous error
             [
                 (
                     t,
                     edge,
                     np.round(
                         sum(
-                            edgesAtT[
+                            edgesAtT.loc[
                                 [
                                     ii
-                                    for ii, val in enumerate(edgesAtT[:, 1])
+                                    for ii, val in enumerate(edgesAtT[1])
                                     if val == edge
                                 ],
                                 2,
